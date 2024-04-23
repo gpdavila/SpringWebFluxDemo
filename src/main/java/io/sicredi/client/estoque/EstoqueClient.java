@@ -24,10 +24,6 @@ public class EstoqueClient {
         .get()
         .uri("/estoque/" + idProduto)
         .retrieve()
-//        .onStatus(HttpStatusCode::is4xxClientError,
-//            ExceptionWrapper::toBusinessException)
-//        .onStatus(HttpStatusCode::is5xxServerError,
-//            ExceptionWrapper::toTechnicalException)
         .bodyToMono(Estoque.class);
   }
 }

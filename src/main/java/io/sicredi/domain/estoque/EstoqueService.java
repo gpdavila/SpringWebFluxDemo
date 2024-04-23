@@ -17,12 +17,7 @@ public class EstoqueService {
 
     return Mono.just(idProduto)
         .doOnNext(s -> log.info("Buscando Estoque do produto: {}", idProduto))
-        .flatMap(client::buscarEstoque)
-        .map(estoque ->
-            Estoque.builder()
-                .quantidade(estoque.getQuantidade())
-                .build()
-        );
+        .flatMap(client::buscarEstoque);
   }
 
   public Mono<Void> atualizar(String idProduto) {

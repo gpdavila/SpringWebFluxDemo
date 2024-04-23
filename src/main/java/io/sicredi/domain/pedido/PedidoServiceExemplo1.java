@@ -3,6 +3,7 @@ package io.sicredi.domain.pedido;
 import io.sicredi.domain.estoque.EstoqueService;
 import io.sicredi.domain.pagamento.PagamentosService;
 import io.sicredi.domain.produto.ProdutoService;
+import io.sicredi.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -40,7 +41,7 @@ public class PedidoServiceExemplo1 {
     return buscarEstoque
         .flatMap(estoque -> estoque.getQuantidade() > 0
             ? this.criaPedido(idProduto)
-            : Mono.error(() -> new RuntimeException("Sem Estoque do Produto"))
+            : Mono.error(() -> new BusinessException("Sem Estoque do Produto"))
         );
   }
 
