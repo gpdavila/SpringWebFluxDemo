@@ -13,13 +13,40 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class PedidoServiceExemplo1 {
 
-  private final PagamentosService pagamentosService;
   private final EstoqueService estoqueService;
   private final ProdutoService produtoService;
+  private final PagamentosService pagamentosService;
 
-  // Fazendo um if e else
-  // Utilizando operador ternario -> Else disparando exceção
+  /*
+   Se  estoqueProduto > 0
+        Cria Pedido
+    Senão
+        Dispara Exceção
+  */
+
+  // Fluxo condicional
+  // Utilizando operador ternario - Exemplo 1
   public Mono<Pedido> criar(String idProduto) {
+
+    return Mono.empty();
+  }
+
+  // Fluxo condicional
+  // Utilizando operador ternario - Exemplo 1
+  public Mono<Pedido> criar1(String idProduto) {
+
+    var buscarEstoque = estoqueService.buscar(idProduto);
+
+    return buscarEstoque
+        .flatMap(estoque -> estoque.getQuantidade() > 0
+            ? this.criaPedido(idProduto)
+            : Mono.error(() -> new RuntimeException("Sem Estoque do Produto"))
+        );
+  }
+
+  // Fluxo condicional
+  // Utilizando operador ternario - Exemplo 2
+  public Mono<Pedido> criar2(String idProduto) {
 
     var buscarEstoque = estoqueService.buscar(idProduto);
 

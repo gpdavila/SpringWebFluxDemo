@@ -13,14 +13,19 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class PedidoServiceExemplo2 {
 
-  private final PagamentosService pagamentosService;
   private final EstoqueService estoqueService;
   private final ProdutoService produtoService;
-
-  // Fazendo um if e else
-  // Utilizando abordagem do filter + switchIfEmpty
+  private final PagamentosService pagamentosService;
 
   public Mono<Pedido> criar(String idProduto) {
+
+    return  Mono.empty();
+  }
+
+
+  // Fluxo condicional
+  // Utilizando operador filter - Exemplo 2
+  public Mono<Pedido> criar2(String idProduto) {
 
     var buscarEstoque = estoqueService.buscar(idProduto);
 
@@ -46,5 +51,4 @@ public class PedidoServiceExemplo2 {
               .build()
         );
   }
-
 }
