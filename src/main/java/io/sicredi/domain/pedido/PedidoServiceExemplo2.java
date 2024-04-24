@@ -17,10 +17,39 @@ public class PedidoServiceExemplo2 {
   private final ProdutoService produtoService;
   private final PagamentosService pagamentosService;
 
+    /*
+   Se  estoqueProduto > 0
+        Cria Pedido
+    Senão
+        SolicitaReposiçãoProduto
+        Dispara Exceção
+  */
+
   public Mono<Pedido> criar(String idProduto) {
 
     return  Mono.empty();
   }
+
+
+  private Mono<Pedido> criaPedido(String idProduto) {
+
+    return produtoService.buscar(idProduto)
+        .flatMap(produto -> pagamentosService.gerar(produto.getValor()))
+        .map(pagamento ->
+            Pedido
+                .builder()
+                .id(Pedido.gerarId())
+                .codigoPix(pagamento.getCodigoPix())
+                .build()
+        );
+  }
+
+
+  /*
+   *
+   * Respostas
+   *
+   * */
 
 
   // Fluxo condicional
@@ -34,21 +63,9 @@ public class PedidoServiceExemplo2 {
         .filter(estoqueDisponivel -> estoqueDisponivel.equals(TRUE))
         .flatMap(x -> this.criaPedido(idProduto))
         .switchIfEmpty(
-            produtoService.solicitarReposicao(idProduto)
-                .then(Mono.error(() -> new RuntimeException("Sem Estoque do Produto")))
+            Mono.defer( () -> produtoService.solicitarReposicao(idProduto)
+                .then(Mono.error(() -> new RuntimeException("Sem Estoque do Produto"))) )
         );
   }
 
-  private Mono<Pedido> criaPedido(String idProduto) {
-
-    return produtoService.buscar(idProduto)
-        .flatMap(produto -> pagamentosService.gerar(produto.getValor()))
-        .map(pagamento ->
-          Pedido
-              .builder()
-              .id(Pedido.gerarId())
-              .codigoPix(pagamento.getCodigoPix())
-              .build()
-        );
-  }
 }

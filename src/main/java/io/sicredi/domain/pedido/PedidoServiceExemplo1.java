@@ -32,6 +32,28 @@ public class PedidoServiceExemplo1 {
     return Mono.empty();
   }
 
+  private Mono<Pedido> criaPedido(String idProduto) {
+
+    return produtoService.buscar(idProduto)
+        .flatMap(produto -> pagamentosService.gerar(produto.getValor()))
+        .doOnNext(pagamento -> log.info("Codigo Pix gerado com sucesso: {}", pagamento.getCodigoPix()))
+        .map(pagamento ->
+            Pedido
+                .builder()
+                .id(Pedido.gerarId())
+                .codigoPix(pagamento.getCodigoPix())
+                .build()
+        );
+  }
+
+
+
+  /*
+  *
+  * Respostas
+  *
+  * */
+
   // Fluxo condicional
   // Utilizando operador ternario - Exemplo 1
   public Mono<Pedido> criar1(String idProduto) {
@@ -67,17 +89,4 @@ public class PedidoServiceExemplo1 {
 
   }
 
-  private Mono<Pedido> criaPedido(String idProduto) {
-
-    return produtoService.buscar(idProduto)
-        .flatMap(produto -> pagamentosService.gerar(produto.getValor()))
-        .doOnNext(pagamento -> log.info("Codigo Pix gerado com sucesso: {}", pagamento.getCodigoPix()))
-        .map(pagamento ->
-            Pedido
-                .builder()
-                .id(Pedido.gerarId())
-                .codigoPix(pagamento.getCodigoPix())
-                .build()
-        );
-  }
 }
